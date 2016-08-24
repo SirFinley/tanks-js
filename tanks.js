@@ -1,6 +1,5 @@
 var width = 1000;
 var height = 800;
-var score = 0;
 var c = document.getElementById("canvas1");
 var ctx = c.getContext("2d");
 
@@ -33,7 +32,7 @@ function Ball(x,y){
 		ctx.fill();
 	};
 	this.onclick = function(){};
-};
+}
 
 function Tank(x,y) {
 	this.x = x;
@@ -81,7 +80,7 @@ function Tank(x,y) {
 	this.moveRight = function() {
 		this.x += 1;
 	};
-};
+}
 
 function degreesToRadians(deg) {
 	return deg / 180 * Math.PI;
@@ -91,12 +90,12 @@ function clear(){
 	ctx.clearRect(0,0,width,height);
 };
 
-balls = []
+var balls = [];
 function addBall(x,y) {
 	var p = new Ball(x,y);
 	balls = balls.concat(p);
 	return p;
-};
+}
 
 var updater = {
 	update: function(){
@@ -121,7 +120,7 @@ function setFrameRate(fps) {
 	updateInterval = setInterval(function(){
 		updater.update();
 		updater.draw();
-	},1000/fps);
+	}, 1000/fps);
 };
 
 c.onmousedown = function(e){
@@ -139,7 +138,7 @@ c.onmousemove = function(e){
 		return;
 	}
 	
-}
+};
 
 document.addEventListener('keydown', function(e) {
 	var upArrow = 38;
@@ -175,7 +174,7 @@ document.addEventListener('keydown', function(e) {
 function reset(){
 	balls = [];
 	clear();
-};
+}
 
 var tank = null;
 function init(){
