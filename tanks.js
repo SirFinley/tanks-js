@@ -38,7 +38,7 @@ function Tank(x,y) {
 	this.x = x;
 	this.y = y;
 	this.barrelAngle = degreesToRadians(45);
-	this.fireSpeed = 10;
+	this.fireSpeed = document.getElementById("powerInput").value;
 	this.color = '#000'
 	this.size = 20;
 	
@@ -65,15 +65,16 @@ function Tank(x,y) {
 	};
 	this.fire = function() {
 		var ball = addBall(this.x, this.y);
+		this.fireSpeed = document.getElementById("powerInput").value;
 		ball.vx = this.fireSpeed*Math.cos(this.barrelAngle);
 		ball.vy = this.fireSpeed*-Math.sin(this.barrelAngle);
 	};
 	this.moveBarrelUp = function() {
 		this.barrelAngle += degreesToRadians(1);
-	}
+	};
 	this.moveBarrelDown = function() {
 		this.barrelAngle -= degreesToRadians(1);
-	}
+	};
 	this.moveLeft = function() {
 		this.x -= 1;
 	};
@@ -88,7 +89,7 @@ function degreesToRadians(deg) {
 
 function clear(){
 	ctx.clearRect(0,0,width,height);
-};
+}
 
 var balls = [];
 function addBall(x,y) {
@@ -121,7 +122,7 @@ function setFrameRate(fps) {
 		updater.update();
 		updater.draw();
 	}, 1000/fps);
-};
+}
 
 c.onmousedown = function(e){
 	console.log("x: " + e.x + "   y: " + e.y);
@@ -181,6 +182,16 @@ function init(){
 	reset();
 	setFrameRate(60);
 	tank = new Tank(50, 600);
+	
+	var powerInput = document.getElementById('powerInput');
+	var powerText = document.getElementById('powerText')
+	powerInput.addEventListener('change', function(){
+		powerText.textContent = powerInput.value;
+	});
+	
+	powerInput.setAttribute('max', 50);
+	powerInput.setAttribute('min', 1);
+	powerText.textContent = powerInput.value;
 }
 
 init();
