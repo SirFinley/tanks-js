@@ -1,11 +1,10 @@
-var width = 1000;
-var height = 800;
-var canvas = document.getElementById("canvas1");
-var context = canvas.getContext("2d");
+// ------------utility------------
 
 Math.degreesToRadians = function(deg) {
 	return deg / 180 * Math.PI;
 };
+
+// ------------utility------------
 
 
 var Ball = {
@@ -132,29 +131,36 @@ var Input = {
 
 var Game = {
 	init: function() {
-		Input.init(canvas);
+		this.canvas = document.getElementById("canvas1");
+		this.setWidth(1000);
+		this.setHeight(800);
+		this.context = this.canvas.getContext("2d");
 		
 		this.balls = [];
-		this.setFrameRate(60);
 		
 		this.tank1 = Object.create(Tank);
-		this.tank1.init(width * 1/10, 600);
+		this.tank1.init(0.1 * this.width, 0.8 * this.height);
+		this.tank1.barrelAngle = Math.degreesToRadians(45);
 		
 		this.tank2 = Object.create(Tank);
-		this.tank2.init(width * 9/10, 600);
+		this.tank2.init(0.9 * this.width, 0.8 * this.height);
 		this.tank2.barrelAngle = Math.degreesToRadians(135);
 		
 		this.tank = this.tank1;
 		
 		var powerInput = document.getElementById('powerInput');
+		powerInput.setAttribute('max', 50);
+		powerInput.setAttribute('min', 1);
+		powerInput.value = 15;
+		
 		var powerText = document.getElementById('powerText');
+		powerText.textContent = powerInput.value;
 		powerInput.addEventListener('change', function() {
 			powerText.textContent = powerInput.value;
 		});
-		
-		powerInput.setAttribute('max', 50);
-		powerInput.setAttribute('min', 1);
-		powerText.textContent = powerInput.value;
+
+		Input.init(this.canvas);
+		this.setFrameRate(60);
 	},
 	addBall: function(x,y) {
 		var ball = Object.create(Ball);
@@ -163,7 +169,7 @@ var Game = {
 		return ball;
 	},
 	clear: function(ctx) {
-		ctx.clearRect(0,0,width,height);
+		ctx.clearRect(0,0,this.width,this.height);
 	},
 	draw: function(ctx) {
 		this.clear(ctx);
@@ -180,19 +186,15 @@ var Game = {
 	drawBackground: function(ctx){
 		// sky
 		ctx.fillStyle = '#0AF';
-		ctx.fillRect(0, 0, width, height);
+		ctx.fillRect(0, 0, this.width, this.height);
 		
 		// ground
 		ctx.fillStyle = '#3C3';
-		ctx.fillRect(0, height*0.75, width, height);
+		ctx.fillRect(0, this.height*0.75, this.width, this.height);
 	},
 	fire: function(){
 		this.tank.fire();
 		this.switchTanks();
-	},
-	updateAndDraw: function() {
-		this.update();
-		this.draw(context);
 	},
 	setFrameRate: function(fps) {
 		clearInterval(this.updateInterval);
@@ -200,6 +202,14 @@ var Game = {
 		var self = this;
 		var update = function() { self.updateAndDraw(); };
 		this.updateInterval = setInterval(update, 1000/fps);
+	},
+	setHeight: function(height) {
+		this.height = height;
+		this.canvas.height = height;
+	},
+	setWidth: function(width) {
+		this.width = width;
+		this.canvas.width = width;
 	},
 	switchTanks: function(){
 		if (this.tank == this.tank1) {
@@ -213,6 +223,10 @@ var Game = {
 		for (var i = 0; i < this.balls.length; i++) {
 			this.balls[i].update();
 		}
+	},
+	updateAndDraw: function() {
+		this.update();
+		this.draw(this.context);
 	},
 };
 
