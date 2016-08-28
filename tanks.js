@@ -1,7 +1,7 @@
 var width = 1000;
 var height = 800;
 var canvas = document.getElementById("canvas1");
-var ctx = canvas.getContext("2d");
+var context = canvas.getContext("2d");
 
 Math.degreesToRadians = function(deg) {
 	return deg / 180 * Math.PI;
@@ -22,7 +22,7 @@ var Ball = {
 		this.y += this.vy;
 		this.vy += 0.15;
 	},
-	draw: function() {
+	draw: function(ctx) {
 		ctx.style = '#000';
 		ctx.fillStyle = this.color;
 		ctx.beginPath();
@@ -41,7 +41,7 @@ var Tank = {
 		this.color = '#000';
 		this.size = 20;
 	},
-	draw: function() {
+	draw: function(ctx) {
 		ctx.style = this.color;
 		ctx.fillStyle = this.color;
 		
@@ -162,22 +162,22 @@ var Game = {
 		this.balls = this.balls.concat(ball);
 		return ball;
 	},
-	clear: function() {
+	clear: function(ctx) {
 		ctx.clearRect(0,0,width,height);
 	},
-	draw: function() {
-		this.clear();
+	draw: function(ctx) {
+		this.clear(ctx);
 		
-		this.drawBackground();
+		this.drawBackground(ctx);
 		
 		for (var i = 0; i < this.balls.length; i++) {
-			this.balls[i].draw();
+			this.balls[i].draw(ctx);
 		}
 		
-		this.tank1.draw();
-		this.tank2.draw();
+		this.tank1.draw(ctx);
+		this.tank2.draw(ctx);
 	},
-	drawBackground: function(){
+	drawBackground: function(ctx){
 		// sky
 		ctx.fillStyle = '#0AF';
 		ctx.fillRect(0, 0, width, height);
@@ -190,17 +190,15 @@ var Game = {
 		this.tank.fire();
 		this.switchTanks();
 	},
-	fullUpdate: function(self) {
-		self.update();
-		self.draw();
+	updateAndDraw: function() {
+		this.update();
+		this.draw(context);
 	},
 	setFrameRate: function(fps) {
 		clearInterval(this.updateInterval);
 		
-		var update = function(self) {
-			return function() { self.fullUpdate(self); };
-		}(this);
-		
+		var self = this;
+		var update = function() { self.updateAndDraw(); };
 		this.updateInterval = setInterval(update, 1000/fps);
 	},
 	switchTanks: function(){
@@ -211,7 +209,7 @@ var Game = {
 			this.tank = this.tank1;
 		}
 	},
-	update: function(self) {
+	update: function() {
 		for (var i = 0; i < this.balls.length; i++) {
 			this.balls[i].update();
 		}
