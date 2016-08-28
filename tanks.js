@@ -1,7 +1,7 @@
 var width = 1000;
 var height = 800;
-var c = document.getElementById("canvas1");
-var ctx = c.getContext("2d");
+var canvas = document.getElementById("canvas1");
+var ctx = canvas.getContext("2d");
 
 Math.degreesToRadians = function(deg) {
 	return deg / 180 * Math.PI;
@@ -90,11 +90,11 @@ var Input = {
 		this.mouseY = 0;
 		this.canvas = canvas;
 		
-		c.onmousemove = function(e) {
+		canvas.onmousemove = function(e) {
 			this.mouseX = e.x;
 			this.mouseY = e.y;
 		};
-		c.onmousedown = function(e) {
+		canvas.onmousedown = function(e) {
 			Game.tank.fire();
 		};
 		document.addEventListener('keydown', function(e) {
@@ -134,7 +134,7 @@ var Game = {
 	balls: [],
 	tank: null,
 	init: function() {
-		Input.init();
+		Input.init(canvas);
 		
 		this.reset();
 		this.setFrameRate(60);
@@ -162,10 +162,22 @@ var Game = {
 	},
 	draw: function() {
 		this.clear();
+		
+		this.drawBackground();
+		
 		for (var i = 0; i < this.balls.length; i++) {
 			this.balls[i].draw();
 		}
 		this.tank.draw();
+	},
+	drawBackground: function(){
+		// sky
+		ctx.fillStyle = '#0AF';
+		ctx.fillRect(0, 0, width, height);
+		
+		// ground
+		ctx.fillStyle = '#3C3';
+		ctx.fillRect(0, height*0.75, width, height);
 	},
 	fullUpdate: function(self) {
 		self.update();
