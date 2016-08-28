@@ -95,7 +95,7 @@ var Input = {
 			this.mouseY = e.y;
 		};
 		canvas.onmousedown = function(e) {
-			Game.tank.fire();
+			Game.fire();
 		};
 		document.addEventListener('keydown', function(e) {
 			var upArrow = 38;
@@ -116,7 +116,7 @@ var Input = {
 			}
 			
 			if (e.keyCode == space) {
-				Game.tank.fire();
+				Game.fire();
 			}
 			
 			if (e.keyCode == leftArrow) {
@@ -131,15 +131,20 @@ var Input = {
 };
 
 var Game = {
-	balls: [],
-	tank: null,
 	init: function() {
 		Input.init(canvas);
 		
-		this.reset();
+		this.balls = [];
 		this.setFrameRate(60);
-		this.tank = Object.create(Tank);
-		this.tank.init(50, 600);
+		
+		this.tank1 = Object.create(Tank);
+		this.tank1.init(width * 1/10, 600);
+		
+		this.tank2 = Object.create(Tank);
+		this.tank2.init(width * 9/10, 600);
+		this.tank2.barrelAngle = Math.degreesToRadians(135);
+		
+		this.tank = this.tank1;
 		
 		var powerInput = document.getElementById('powerInput');
 		var powerText = document.getElementById('powerText');
@@ -168,7 +173,9 @@ var Game = {
 		for (var i = 0; i < this.balls.length; i++) {
 			this.balls[i].draw();
 		}
-		this.tank.draw();
+		
+		this.tank1.draw();
+		this.tank2.draw();
 	},
 	drawBackground: function(){
 		// sky
@@ -179,13 +186,13 @@ var Game = {
 		ctx.fillStyle = '#3C3';
 		ctx.fillRect(0, height*0.75, width, height);
 	},
+	fire: function(){
+		this.tank.fire();
+		this.switchTanks();
+	},
 	fullUpdate: function(self) {
 		self.update();
 		self.draw();
-	},
-	reset: function() {
-		this.balls = [];
-		this.clear();
 	},
 	setFrameRate: function(fps) {
 		clearInterval(this.updateInterval);
@@ -195,6 +202,14 @@ var Game = {
 		}(this);
 		
 		this.updateInterval = setInterval(update, 1000/fps);
+	},
+	switchTanks: function(){
+		if (this.tank == this.tank1) {
+			this.tank = this.tank2;
+		}
+		else {
+			this.tank = this.tank1;
+		}
 	},
 	update: function(self) {
 		for (var i = 0; i < this.balls.length; i++) {
